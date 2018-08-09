@@ -4,7 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Timestamp;
+import java.util.Date;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,23 +13,21 @@ import kr.mz.study.mvc1.db.DBConn;
 
 public class ArticleDAO {
 	
-	Connection conn = null;
-	PreparedStatement pstmt = null;
-	ResultSet rs = null;
-	String sql = null;
-	
 	/**
 	 * 게시판 리스트
 	 * @return ArrayList
 	 */
 	public List<Article> getArticleList(){
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
 		
 		List<Article> list = new ArrayList<>();
 		
 		try {
-			sql = "SELECT idx, user_nm, article_pw, title, content, created " + 
+			String sql = "SELECT idx, user_nm, article_pw, title, content, created " + 
 					"FROM BOARD WHERE deleted = 0 ORDER BY idx DESC LIMIT 10";
-			
+
 			conn = DBConn.getConnection();
 			pstmt = conn.prepareStatement(sql);
 			rs = pstmt.executeQuery();
@@ -40,7 +38,7 @@ public class ArticleDAO {
 				String article_pw = rs.getString("article_pw");
 				String title = rs.getString("title");
 				String content = rs.getString("content");
-				Timestamp created = rs.getTimestamp("created");
+				Date created = rs.getTimestamp("created");
 				
 				Article dto = new Article(idx, user_nm, article_pw, title, content, created);
 				list.add(dto);
@@ -63,10 +61,13 @@ public class ArticleDAO {
 	 * @return DTO
 	 */
 	public Article getArticleDetail(Integer idx) {
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
 		Article dto = null;
 		
 		try {
-			sql = "SELECT user_nm, article_pw, title, content, created " + 
+			String sql = "SELECT user_nm, article_pw, title, content, created " + 
 					"FROM BOARD WHERE idx = ?";
 			
 			conn = DBConn.getConnection();
@@ -81,7 +82,7 @@ public class ArticleDAO {
 				dto.setContent(rs.getString("content"));
 				dto.setArticle_pw(rs.getString("article_pw"));
 				dto.setTitle(rs.getString("title"));
-				dto.setCreated(rs.getTimestamp("created"));
+				dto.setCreated(rs.getDate("created"));
 			}
 			
 		} catch(Exception e) {
@@ -103,11 +104,12 @@ public class ArticleDAO {
 	 * @return int
 	 */
 	public int createArticle(String article_pw, String title, String user_nm, String content){
-		
+		Connection conn = null;
+		PreparedStatement pstmt = null;
 		int result = -1;
 		
 		try {
-			sql = "INSERT INTO BOARD (user_nm, article_pw, title, content, created, deleted) " + 
+			String sql = "INSERT INTO BOARD (user_nm, article_pw, title, content, created, deleted) " + 
 					         "VALUES (?, ?, ?, ?, NOW(), 0)";
 			
 			conn = DBConn.getConnection();
@@ -122,7 +124,6 @@ public class ArticleDAO {
 		} catch(Exception e) {
 			e.printStackTrace();
 		} finally {
-			if(rs != null) try {rs.close();} catch (SQLException sqle) {}
 			if(pstmt != null) try {pstmt.close();} catch (SQLException sqle) {}
 			if(conn != null) try {conn.close();} catch (SQLException sqle) {}
 		}
@@ -139,11 +140,12 @@ public class ArticleDAO {
 	 * @return int
 	 */
 	public int modifyArticle(String user_nm, String article_pw, String title, String content, Integer idx){
-		
+		Connection conn = null;
+		PreparedStatement pstmt = null;
 		int result = -1;
 		
 		try {
-			sql = "UPDATE BOARD SET user_nm = ?, article_pw = ?, title = ?, content = ? " + 
+			String sql = "UPDATE BOARD SET user_nm = ?, article_pw = ?, title = ?, content = ? " + 
 							 "WHERE idx = ?";
 			
 			conn = DBConn.getConnection();
@@ -157,6 +159,69 @@ public class ArticleDAO {
 			result = pstmt.executeUpdate();
 			
 		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if(pstmt != null) try {pstmt.close();} catch (SQLException sqle) {}
+			if(conn != null) try {conn.close();} catch (SQLException sqle) {}
+		}
+		
+		return result;
+	}
+	
+	/**
+	 * 게시글 삭제(deleted:1로 update)
+	 * @param idx
+	 * @return int
+	 */
+	public int deleteArticle(Integer idx) {
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		int result = -1;
+		
+		try {
+			String sql = "UPDATE BOARD SET deleted = 1 " + 
+							 "WHERE idx = ?";
+			
+			conn = DBConn.getConnection();
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setInt(1, idx);
+			
+			result = pstmt.executeUpdate();
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if(pstmt != null) try {pstmt.close();} catch (SQLException sqle) {}
+			if(conn != null) try {conn.close();} catch (SQLException sqle) {}
+		}
+		
+		return result;
+	}
+	
+	/**
+	 * 비밀번호 확인 (수정, 삭제시)
+	 * @param article_pw
+	 * @param idx
+	 * @return int
+	 */
+	public String checkPassword(Integer idx) {
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		String result = null;
+		
+		try {
+			String sql = "SELECT article_pw FROM BOARD WHERE idx = ?";
+			
+			conn = DBConn.getConnection();
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setInt(1, idx);
+			rs = pstmt.executeQuery();
+			
+			if(rs.next()) {
+				result = rs.getString("article_pw");
+			}
+		} catch(Exception e) {
 			e.printStackTrace();
 		} finally {
 			if(rs != null) try {rs.close();} catch (SQLException sqle) {}

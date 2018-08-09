@@ -15,7 +15,7 @@
 
 <head>
 <meta charset="UTF-8">
-<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/common.css">
+<link rel="stylesheet" type="text/css" href="css/common.css">
 <title>MVC1 게시판 리스트</title>
 </head>
 <body>
@@ -31,7 +31,7 @@
 				<tr>
 					<td>${list.idx}</td>
 					<td>
-						<a href="${pageContext.request.contextPath}/form.jsp?idx=${list.idx}&isRead=true">
+						<a href="${pageContext.request.contextPath}/readForm.jsp?idx=${list.idx}">
 							${list.title}
 						</a>
 					</td>
@@ -43,10 +43,11 @@
 			</c:forEach>	
 		</table>
 		<div>
-			<input type="button" value="글쓰기" class="btn-goWrite">
+			<a href="${pageContext.request.contextPath}/form.jsp?idx:isnull=true&isNew=true">
+				글쓰기
+			</a>
 		</div>
 	</div>
 <script src="//code.jquery.com/jquery-latest.min.js"></script>
-<script src="${pageContext.request.contextPath}/js/index.js"></script>
 </body>
 </html>

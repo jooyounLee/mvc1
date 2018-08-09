@@ -6,26 +6,13 @@
 <%
 	request.setCharacterEncoding("UTF-8");
 
-	ArticleDAO dao = new ArticleDAO();
+	ArticleDAO dao = new ArticleDAO();	
 	String idx = request.getParameter("idx");
 	
-	/* 수정 */
+	/* 글 한개 select */
 	if(idx != null) {
-		
 		Article result = dao.getArticleDetail(Integer.parseInt(idx));
 		request.setAttribute("result", result);
-		
-		String rePassword = request.getParameter("re-password");
-		String originPassword = result.getArticle_pw();
-		
-		if (!rePassword.equals(originPassword)) {
-%>
-			<script>
-				alert("비밀번호를 확인해주세요.");
-				history.go(-1);
-			</script>
-<%			
-		}
 	}
 
 %>
@@ -34,38 +21,38 @@
 <head>
 <meta charset="UTF-8">
 <link rel="stylesheet" type="text/css" href="css/common.css">
-<title>MVC1 게시판 쓰기,수정 폼</title>
+<title>MVC1 게시판 글 상세</title>
 </head>
 <body>
-	<div class="write_wrap">
-		<form id="form" method="post" action="#">
-			<input type="hidden" name="isNew" value="${param.isNew }">
+	<div id="read_wrap">
+	
+		<form id="form-read" method="post" action="#">
 			<input type="hidden" name="idx" value="${param.idx }">
 			<table>
 				<tr>
 					<td>이름</td>
-					<td><input type="text" name="user_nm" value="${result.user_nm }"></td>
-					<td>비밀번호</td>
-					<td><input type="password" name="article_pw" value=""></td>
+					<td>${result.user_nm }</td>
 				</tr>
 				<tr>
 					<td>제목</td>
-					<td colspan="3"><input type="text" name="title" value="${result.title }"></td>
+					<td>${result.title }</td>
 				</tr>
 				<tr>
 					<td>내용</td>
-					<td colspan="3">
-						<textarea cols="50" rows="20" name="content">${result.content }</textarea>
+					<td>
+						${result.content }
 					</td>
 				</tr>
 			</table>
+			
+			<div id="btn-box-read">
+				<input type="password" name="re-password" placeholder="수정/삭제 비밀번호 입력">
+				<input type="button" name="btn-modify" value="수정">
+				<input type="button" name="btn-delete" value="삭제">
+				<input type="button" name="btn-cancel" value="목록으로">
+			</div>
+			
 		</form>
-		
-		<div id="btn-box">
-			<input type="button" value="취소" name="btn-cancel">
-			<input type="button" value="확인" name="btn-submit">
-		</div>
-		
 	</div>
 	
 <script src="//code.jquery.com/jquery-latest.min.js"></script>
