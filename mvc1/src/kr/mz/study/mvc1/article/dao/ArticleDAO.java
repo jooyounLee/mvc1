@@ -14,10 +14,38 @@ import kr.mz.study.mvc1.db.DBConn;
 public class ArticleDAO {
 	
 	/**
+	 * 총 게시글 수
+	 * @return int
+	 */
+	public int getListCount() {
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		int result = 0;
+		try {
+			String sql = "SELECT COUNT(idx) FROM BOARD WHERE deleted = 0";
+
+			conn = DBConn.getConnection();
+			pstmt = conn.prepareStatement(sql);
+			rs = pstmt.executeQuery();
+			if(rs.next()) {
+				result = rs.getInt(1);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			if(rs != null) try {rs.close();} catch (SQLException sqle) {}
+			if(pstmt != null) try {pstmt.close();} catch (SQLException sqle) {}
+			if(conn != null) try {conn.close();} catch (SQLException sqle) {}
+		}
+		return result;
+	}
+	
+	/**
 	 * 게시판 리스트
 	 * @return ArrayList
 	 */
-	public List<Article> getArticleList(){
+	public List<Article> getArticleList(Integer firstPost, Integer countPostPerPage) {
 		Connection conn = null;
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
@@ -26,10 +54,12 @@ public class ArticleDAO {
 		
 		try {
 			String sql = "SELECT idx, user_nm, article_pw, title, content, created " + 
-					"FROM BOARD WHERE deleted = 0 ORDER BY idx DESC LIMIT 10";
+					"FROM BOARD WHERE deleted = 0 ORDER BY idx DESC LIMIT ?, ?";
 
 			conn = DBConn.getConnection();
 			pstmt = conn.prepareStatement(sql);
+			pstmt.setInt(1, firstPost);
+			pstmt.setInt(2, countPostPerPage);
 			rs = pstmt.executeQuery();
 			
 			while(rs.next()) {
