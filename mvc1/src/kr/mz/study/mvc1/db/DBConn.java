@@ -10,9 +10,9 @@ public class DBConn {
 		try {
 			Class.forName("com.mysql.jdbc.Driver");
 			
-			String url = "jdbc:mysql://localhost:3307/test?useUnicode=true&characterEncoding=utf8";
+			String url = "jdbc:mysql://localhost:3306/test?useUnicode=true&characterEncoding=utf8";
 			String id = "root";
-			String pw = "1234";
+			String pw = "Sfodqh4878S_";
 			
 			conn = DriverManager.getConnection(url, id, pw);
 		} catch (Exception e) {
