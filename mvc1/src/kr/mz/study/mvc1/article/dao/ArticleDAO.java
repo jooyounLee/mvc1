@@ -229,7 +229,7 @@ public class ArticleDAO {
 	}
 	
 	/**
-	 * 비밀번호 확인 (수정, 삭제시)
+	 * 비밀번호 확인 (삭제시)
 	 * @param article_pw
 	 * @param idx
 	 * @return int
