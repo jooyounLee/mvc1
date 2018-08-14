@@ -6,7 +6,7 @@
 <%@ page import="kr.mz.study.mvc1.article.dao.ArticleDAO" %>
 <%@ page import="java.util.*" %>
 <c:set var="contextPath" value="${pageContext.request.contextPath}"/>
-<%-- <jooy:paging pageParam="1" totalPostCount="1" countPostPerPage="1" countPagePerBlock="1"/> --%>
+
 <%
 
 	/** 페이징 08.09 17:30 시작 **/
@@ -21,12 +21,9 @@
 	//		: 현재블럭 계산해서 사용하기(완)
 	//		: 현재페이지 표시(완)
 	//		: 이전, 다음 span(완)
-	//		: 커스텀 태그로 만들기
+	//		: 커스텀 태그로 만들기(작업중...)
 
 	ArticleDAO article = new ArticleDAO();
-	
-	// param--
-	String pageParam = request.getParameter("page");
 	
 	// 전체 글 수--
 	int totalPostCount = article.getListCount();
@@ -37,51 +34,25 @@
 	// 한 블럭당 페이지 수--
 	int countPagePerBlock = 3;
 	
-	// 총 페이지수
-	double totalPage = Math.ceil((double)totalPostCount / (double)countPostPerPage);
-	int totalPageCount = (int)totalPage;
-	
-	// 현재 페이지
+	// page parameter
+	String pageParam = request.getParameter("page");
 	int selectPageNum = 1;
 	if(pageParam != null) {
 		selectPageNum = Integer.parseInt(pageParam);
-	}
+	}	
 	
-	// 현재 페이지 첫번째 글
+	// 페이지 첫번째 글
 	int firstPost = countPostPerPage * (selectPageNum - 1);
 	if(firstPost < 0) {
 		firstPost = 0;
 	}
 	
-	// 총 블럭 수
-	double totalBlock = Math.ceil((double)totalPageCount / (double)countPagePerBlock);
-	int totalBlockCount = (int)totalBlock;
-	
-	// 현재 블럭
-	double selectBlock = Math.ceil((double)selectPageNum / (double)countPagePerBlock);
-	int selectBlockNum = (int)selectBlock;	
-	
-	// 선택한 블럭 첫번째 페이지
-	int firstPage = countPagePerBlock * (selectBlockNum - 1) + 1;
-	if(firstPage < 1) {
-		firstPage = 1;
-	}
-	
-	// 선택한 블럭 마지막 페이지
-	int lastPage = countPagePerBlock * selectBlockNum;
-	if(lastPage > totalPageCount){
-		lastPage = totalPageCount;
-	}
-	
-	// 이전 페이지
-	int pagePrev = firstPage - 1;
-	
-	// 다음 페이지
-	int pageNext = lastPage + 1;
-	
 	// 게시물 리스트 get
 	request.setAttribute("articleList", article.getArticleList(firstPost, countPostPerPage));
 %>
+
+
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -90,6 +61,7 @@
 <title>MVC1 게시판 리스트</title>
 </head>
 <body>
+
 	<div class="board_wrap">
 		<table>
 			<tr>
@@ -121,61 +93,11 @@
 		</div>
 		
 		<div id="page-box">
-<%
-			if(selectPageNum > 1) {
-%>
-				<a href="${contextPath}/index.jsp?page=1"> << </a>
-<%				
-			} else {
-%>
-				<span> << </span>
-<%				
-			}
-			if(firstPage > 1) {
-%>
-				<a href="${contextPath}/index.jsp?page=<%=pagePrev %>"> 이전 </a>
-<%				
-			} else {
-%>
-				<span>이전</span>
-<%
-			}
-			
-			for(int i = firstPage; i <= lastPage; i++) {
-				if(i == selectPageNum) {
-%>
-					<a href="${contextPath}/index.jsp?page=<%= i %>" style="font-size:20px;font-weight:bold;">
-						<%= i %>
-					</a>
-<%				
-				} else {
-%>
-					<a href="${contextPath}/index.jsp?page=<%= i %>">
-						<%= i %>
-					</a>
-<%										
-				}
-			}
-			
-			if(lastPage < totalPageCount) {
-%>
-				<a href="${contextPath}/index.jsp?page=<%=pageNext %>">다음</a>
-<%				
-			} else {
-%>
-				<span> 다음 </span>
-<%				
-			}
-			if(selectPageNum < totalPageCount) {
-%>
-				<a href="${contextPath}/index.jsp?page=<%=totalPageCount %>"> >> </a>
-<%			
-			} else {
-%>
-				<span> >> </span>
-<%				
-			}
-%>
+			<jooy:paging pageParam="${param.pageParam }" 
+						 requestURI="<%=request.getRequestURI() %>" 
+						 totalPostCount="<%=totalPostCount %>" 
+						 countPostPerPage="<%=countPostPerPage %>" 
+						 countPagePerBlock="<%=countPagePerBlock %>"/>
 		</div>
 	</div>
 <script src="//code.jquery.com/jquery-latest.min.js"></script>
