@@ -160,12 +160,6 @@ public class Pagination extends SimpleTagSupport {
 		double totalPage = Math.ceil((double)totalPostCount / (double)countPostPerPage);
 		totalPageCount = (int)totalPage;
 		
-		// 현재 페이지 첫번째 글
-		/*firstPost = countPostPerPage * (selectPageNum - 1);
-		if(firstPost < 0) {
-			firstPost = 0;
-		}*/
-		
 		// 총 블럭 수
 		double totalBlock = Math.ceil((double)totalPageCount / (double)countPagePerBlock);
 		totalBlockCount = (int)totalBlock;
@@ -191,10 +185,8 @@ public class Pagination extends SimpleTagSupport {
 		
 		// 다음 페이지
 		pageNext = lastPage + 1;
-		
-		
-		out.write("ee");
 
+		// 페이지 버튼 print
 		if(selectPageNum > 1) {
 			out.write("<a href=\"" + requestURI + "?page=1\"> << </a>");
 		} else {

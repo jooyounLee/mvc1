@@ -93,7 +93,7 @@
 		</div>
 		
 		<div id="page-box">
-			<jooy:paging pageParam="${param.pageParam }" 
+			<jooy:paging pageParam="<%=selectPageNum %>" 
 						 requestURI="<%=request.getRequestURI() %>" 
 						 totalPostCount="<%=totalPostCount %>" 
 						 countPostPerPage="<%=countPostPerPage %>" 
