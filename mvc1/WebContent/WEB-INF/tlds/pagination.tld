@@ -10,12 +10,7 @@
         <tag-class>kr.mz.study.mvc1.util.Pagination</tag-class>
         <body-content>empty</body-content>
         <attribute>
-			<name>pageParam</name>
-			<required>true</required>
-			<rtexprvalue>true</rtexprvalue>
-		</attribute> 
-        <attribute>
-			<name>requestURI</name>
+			<name>selectPageNum</name>
 			<required>true</required>
 			<rtexprvalue>true</rtexprvalue>
 		</attribute> 
@@ -31,7 +26,12 @@
 		</attribute>
 		<attribute>
 			<name>countPagePerBlock</name>
-			<required>true</required>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>pageParamName</name>
+			<required>false</required>
 			<rtexprvalue>true</rtexprvalue>
 		</attribute>
     </tag>

@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 <%@ page import="kr.mz.study.mvc1.article.dao.ArticleDAO" %>
 <%@ page import="kr.mz.study.mvc1.article.model.Article" %>
 <%
@@ -12,8 +13,16 @@
 	/* 글 한개 select */
 	if(idx != null) {
 		Article result = dao.getArticleDetail(Integer.parseInt(idx));
+		
+		String content = result.getContent();
+		content = content.replaceAll("<", "&lt;");
+		content = content.replaceAll(">", "&gt;");
+		content = content.replaceAll("\r\n", "<br/>");
+		
+		request.setAttribute("content", content);
 		request.setAttribute("result", result);
 	}
+	
 
 %>
 <!DOCTYPE html>
@@ -31,17 +40,15 @@
 			<table>
 				<tr>
 					<td>이름</td>
-					<td>${result.user_nm }</td>
+					<td><c:out value="${result.user_nm }"/></td>
 				</tr>
 				<tr>
 					<td>제목</td>
-					<td>${result.title }</td>
+					<td><c:out value="${result.title }"/></td>
 				</tr>
 				<tr>
 					<td>내용</td>
-					<td>
-						${result.content }
-					</td>
+					<td>${content }</td>
 				</tr>
 			</table>
 			
